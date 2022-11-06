@@ -2,15 +2,17 @@ from nltk import WordNetLemmatizer
 import nltk
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+import wikipedia
 # nltk.download("averaged_perceptron_tagger")
 # nltk.download("wordnet")
 # nltk.download("punkt")
 
-text = 'Originally, vegetables were collected from the wild by hunter-gatherers. Vegetables are all plants. Vegetables can be eaten either raw or cooked.'
-question = 'What are vegetables?' 
+# Get wikipedia content
+text = wikipedia.page("Vegetables").content
 
 lemmatizer = WordNetLemmatizer()
 
+# Lemmatize sentence
 def make_lemma(sentence):
     sentence_tokens = nltk.word_tokenize(sentence.lower())
     pos_tags = nltk.pos_tag(sentence_tokens)
@@ -23,11 +25,11 @@ def make_lemma(sentence):
 
     return sentence_lemmas
 
+# Find similar sentence
 def process(text, question):
     # Split sentences into tokens
     sentence_tokens = nltk.sent_tokenize(text)
     sentence_tokens.append(question)
-    print(sentence_tokens)
 
     # Algorithm that finds coefficient that denotes importance of each word
     tv = TfidfVectorizer(tokenizer=make_lemma)
@@ -49,3 +51,9 @@ def process(text, question):
 while True:
     question = input("What would you like to know?\n")
     output = process(text=text, question=question)
+    if output:
+        print(output)
+    elif question=="quit":
+        break
+    else:
+        print("I don't know.")
