@@ -23,24 +23,29 @@ def make_lemma(sentence):
 
     return sentence_lemmas
 
-# Split sentences into tokens
-sentence_tokens = nltk.sent_tokenize(text)
-sentence_tokens.append(question)
-print(sentence_tokens)
+def process(text, question):
+    # Split sentences into tokens
+    sentence_tokens = nltk.sent_tokenize(text)
+    sentence_tokens.append(question)
+    print(sentence_tokens)
 
-# Algorithm that finds coefficient that denotes importance of each word
-tv = TfidfVectorizer(tokenizer=make_lemma)
-tf = tv.fit_transform(sentence_tokens)
-# Compare the question (tf[-1]) with tf
-values = cosine_similarity(tf[-1], tf)
-# To find sentence with maximum similarity - gets index of most similar sentence
-index = values.argsort()[0][-2]
+    # Algorithm that finds coefficient that denotes importance of each word
+    tv = TfidfVectorizer(tokenizer=make_lemma)
+    tf = tv.fit_transform(sentence_tokens)
+    # Compare the question (tf[-1]) with tf
+    values = cosine_similarity(tf[-1], tf)
+    # To find sentence with maximum similarity - gets index of most similar sentence
+    index = values.argsort()[0][-2]
 
-# To get coefficient of most similar sentence
-# Get rid of the nested lists
-values_flat = values.flatten()
-values_flat.sort()
-coeff = values_flat[-2]
+    # To get coefficient of most similar sentence
+    # Get rid of the nested lists
+    values_flat = values.flatten()
+    values_flat.sort()
+    coeff = values_flat[-2]
 
-if coeff > 0.3:
-    print(sentence_tokens[index])
+    if coeff > 0.3:
+        return sentence_tokens[index]
+
+while True:
+    question = input("What would you like to know?\n")
+    output = process(text=text, question=question)
